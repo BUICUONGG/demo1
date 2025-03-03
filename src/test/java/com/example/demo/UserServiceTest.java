@@ -59,4 +59,19 @@ public class UserServiceTest {
         userService.deleteUser(1L);
         verify(userRepository, times(1)).deleteById(1L);
     }
+
+    @Test
+    void testGetUserById_Fail() {
+        // Giả lập repository trả về user không đúng
+        when(userRepository.findById(1L)).thenReturn(Optional.of(new User(2L, "Wrong User", "wrong@example.com")));
+
+        Optional<User> foundUser = userService.getUserById(1L);
+
+        // Kiểm tra user có đúng ID không (sẽ bị lỗi)
+        assertEquals(1L, foundUser.get().getId(), "Expected ID 1, but got a different ID");
+    }
+
+
+
+
 }

@@ -25,32 +25,53 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private User user;
+    private User user1;
+    private User user2;
+    private User user3;
 
     @BeforeEach
     void setUp() {
-        user = new User(1L, "John Doe", "john@example.com");
+        user1 = new User(1L, "John Doe", "john@example.com");
+        user2 = new User(2L, "Jane Smith", "jane@example.com");
+        user3 = new User(3L, "Alice Johnson", "alice@example.com");
     }
 
     @Test
     void testGetAllUsers() {
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user));
+        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2, user3));
         List<User> users = userService.getAllUsers();
-        assertEquals(1, users.size());
+        assertEquals(3, users.size());
+        assertEquals(user1.getName(), users.get(0).getName());
+        assertEquals(user2.getName(), users.get(1).getName());
+        assertEquals(user3.getName(), users.get(2).getName());
     }
 
     @Test
     void testGetUserById() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
         Optional<User> foundUser = userService.getUserById(1L);
         assertTrue(foundUser.isPresent());
+        assertEquals(user1.getId(), foundUser.get().getId());
     }
 
     @Test
     void testCreateUser() {
-        when(userRepository.save(user)).thenReturn(user);
-        User savedUser = userService.createUser(user);
+        when(userRepository.save(user1)).thenReturn(user1);
+        User savedUser = userService.createUser(user1);
         assertNotNull(savedUser);
+        assertEquals(user1.getName(), savedUser.getName());
+    }
+
+    @Test
+    void testUpdateUser() {
+        User updatedUser = new User(1L, "John Updated", "john.updated@example.com");
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(updatedUser);
+
+        User result = userService.updateUser(1L, updatedUser);
+        assertNotNull(result);
+        assertEquals("John Updated", result.getName());
+        assertEquals("john.updated@example.com", result.getEmail());
     }
 
     @Test
@@ -61,17 +82,48 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetUserById_Fail() {
-        // Giả lập repository trả về user không đúng
-        when(userRepository.findById(1L)).thenReturn(Optional.of(new User(2L, "Wrong User", "wrong@example.com")));
-
-        Optional<User> foundUser = userService.getUserById(1L);
-
-        // Kiểm tra user có đúng ID không (sẽ bị lỗi)
-        assertEquals(1L, foundUser.get().getId(), "Expected ID 1, but got a different ID");
+    void testGetUserById_NotFound() {
+        when(userRepository.findById(4L)).thenReturn(Optional.empty());
+        Optional<User> foundUser = userService.getUserById(4L);
+        assertFalse(foundUser.isPresent());
     }
 
+    @Test
+    void testUpdateUser_NotFound() {
+        User updatedUser = new User(4L, "Nonexistent User", "nonexistent@example.com");
+        when(userRepository.findById(4L)).thenReturn(Optional.empty());
 
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userService.updateUser(4L, updatedUser);
+        });
+
+        assertEquals("User not found", exception.getMessage());
+    }
+
+    // Unhappy case: Attempt to create a user with null values
+    @Test
+    void testCreateUser_NullValues() {
+        User nullUser = new User(null, null, null);
+        when(userRepository.save(nullUser)).thenThrow(new IllegalArgumentException("User details cannot be null"));
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.createUser(nullUser);
+        });
+
+        assertEquals("User details cannot be null", exception.getMessage());
+    }
+
+    // Unhappy case: Attempt to delete a user that does not exist
+    @Test
+    void testDeleteUser_NotFound() {
+        doThrow(new RuntimeException("User not found")).when(userRepository).deleteById(4L);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            userService.deleteUser(4L);
+        });
+
+        assertEquals("User not found", exception.getMessage());
+    }
 
 
 }

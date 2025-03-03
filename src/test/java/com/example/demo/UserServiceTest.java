@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.crossstore.ChangeSetPersister;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,20 +40,28 @@ public class UserServiceTest {
     @Test
     void testGetAllUsers() {
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2, user3));
+
         List<User> users = userService.getAllUsers();
+
+        System.out.println("Users found: " + users.size());
+        users.forEach(user -> System.out.println("User: " + user.getName()));
+
         assertEquals(3, users.size());
         assertEquals(user1.getName(), users.get(0).getName());
         assertEquals(user2.getName(), users.get(1).getName());
         assertEquals(user3.getName(), users.get(2).getName());
     }
 
+
     @Test
     void testGetUserById() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
-        Optional<User> foundUser = userService.getUserById(1L);
-        assertTrue(foundUser.isPresent());
-        assertEquals(user1.getId(), foundUser.get().getId());
+        User foundUser = userService.getUserById(1L);
+
+        assertNotNull(foundUser);
+        assertEquals(user1.getId(), foundUser.getId());
     }
+
 
     @Test
     void testCreateUser() {
@@ -84,9 +93,11 @@ public class UserServiceTest {
     @Test
     void testGetUserById_NotFound() {
         when(userRepository.findById(4L)).thenReturn(Optional.empty());
-        Optional<User> foundUser = userService.getUserById(4L);
-        assertFalse(foundUser.isPresent());
+
+        assertThrows(ChangeSetPersister.NotFoundException.class, () -> userService.getUserById(4L));
     }
+
+
 
     @Test
     void testUpdateUser_NotFound() {

@@ -17,6 +17,7 @@ Delete Todo: Remove tasks with confirmation.
 Real-time Feedback: Alerts for all actions.
 
 Unit Testing: Thoroughly tested with Jest and React Testing Library.
+
 📚 Technologies Used
 
 React (with hooks)

@@ -17,3 +17,16 @@ Delete Todo: Remove tasks with confirmation.
 Real-time Feedback: Alerts for all actions.
 
 Unit Testing: Thoroughly tested with Jest and React Testing Library.
+📚 Technologies Used
+
+React (with hooks)
+
+Vite (for fast builds)
+
+Bootstrap (styling)
+
+shadcn/ui (for modern UI components)
+
+Lucide React (for icons)
+
+Jest & React Testing Library (for unit tests)

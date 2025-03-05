@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
-import { Alert } from "@/components/ui/alert"; // hiện lỗi khi todo quá tải 200 chũ, hoăc để trống, nhập các dữ liệu đã tồn tại
+import { Alert } from "@/components/ui/alert";
+import { toast, Toaster } from "react-hot-toast"; // Import thêm Toaster
 
 const App = () => {
   const [todos, setTodos] = useState(() => {
@@ -14,10 +15,11 @@ const App = () => {
   const [error, setError] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
-  // hihi
+
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
+  console.log(localStorage.getItem("todos"));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,6 +53,7 @@ const App = () => {
     setTodos([...todos, newTodo]);
     setInputValue("");
     setError("");
+    toast.success("Todo added successfully!"); // Add success toast for adding
   };
 
   const toggleComplete = (id) => {
@@ -88,6 +91,7 @@ const App = () => {
     setEditingId(null);
     setEditValue("");
     setError("");
+    toast.success("Todo updated successfully!"); // Add success toast for editing
   };
 
   const confirmDelete = (id) => {
@@ -99,10 +103,14 @@ const App = () => {
     setTodos(todos.filter((todo) => todo.id !== todoToDelete));
     setShowDeleteModal(false);
     setTodoToDelete(null);
+    toast.success("Todo deleted successfully!"); // Add success toast for deletion
   };
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Thêm Toaster component vào đây */}
+      <Toaster position="top-right" />
+
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-800">Todo List</h1>

@@ -72,6 +72,48 @@ Dự án sử dụng **Jest** và **React Testing Library** để kiểm thử c
 npm test
 ```
 
+🧢 Mô tả Test Case
+
+Dự án sử dụng Jest và React Testing Library để kiểm thử component.
+
+💡 Test Cases
+
+1. Component Rendering:
+
+Kiểm tra xem danh sách todo có hiển thị ban đầu hay không.
+
+Kiểm tra xem các todo item có được render đúng không.
+
+Xác minh sự hiện diện của input field và các núc n\xfat bấm.
+
+2. User Interactions:
+
+Kiểm tra khả năng thêm todo mới.
+
+Kiểm tra xem todo đánh dấu hoàn thành có được cập nhật không.
+
+Kiểm tra chỉnh sửa todo và lưu thay đổi.
+
+Kiểm tra tính năng xóa todo.
+
+Xác minh cơ chế validation cho input field.
+
+3. State Management:
+
+Kiểm tra xem danh sách todo có cập nhật khi thay đổi không.
+
+Kiểm tra chế độ chỉnh sửa có hoạt động đú\xfang không.
+
+Xác minh trạng thái alert khi người dùng thực hiện thao tác.
+
+4. Edge Cases:
+
+Kiểm tra việc nhập todo rỗng.
+
+Kiểm tra validation khi chỉnh sửa todo.
+
+Kiểm tra việc quản lý nhiều todo cùng lúc.
+
 ### 📊 Kiểm tra độ phủ code
 
 ```sh
